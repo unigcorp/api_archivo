@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 const connect = require('../connection');
 const token = require('../servicios/authentication');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
+ 
+const emailNode = require('nodemailer');
 
 router.get('/get',token.vericarToken,(req,res)=>{
      query = "SELECT * FROM usuario";
@@ -17,7 +20,7 @@ router.get('/get',token.vericarToken,(req,res)=>{
 router.post('/login',(req,res)=>{
     const data = req.body;
     query = "SELECT * FROM usuario WHERE correo = ? AND contrasena = ?";
-    console.log('=====',data)
+    //console.log('=====',data)
     connect.query(query,[data.correo,data.contrasena],(err,result)=>{
         if(!err){
             if(result.length <=0 || result[0].contrasena != data.contrasena){
@@ -61,7 +64,7 @@ router.post('/signup',(req,res)=>{
 });
 
 router.patch('/update',token.vericarToken,(req,res)=>{
-    const data = req.body;
+    const data = req.body; 
     query = "UPDATE usuario SET nombre=?,apellidos=?,contrasena=? WHERE id_usuario=?";
     connect.query(query,[data.nombre,data.apellidos,data.contrasena,data.id_usuario],(error,result)=>{
         if(!error){
@@ -82,6 +85,56 @@ router.delete("/delete/:ids",token.vericarToken,(req,res)=>{
         }
     })
 });
+
+
+
+
+const transporter = emailNode.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.CORREO,
+      pass: process.env.PASSWORD,
+    },
+  });
+
+
+  router.post('/forgotPAssword',(req,res)=>{
+    const data = req.body;
+    query = "SELECT * FROM usuario WHERE correo = ?";
+    connect.query(query,[data.correo],(erro,resul)=>{
+        if(!erro){
+            if(resul.length<=0){
+                return res.status(400).json({message:"CORREO NO EXISTE"})
+            }else{
+                var options = {
+                    from:process.env.CORREO,
+                    to:resul[0].correo,
+                    subject:"Tu contrasena "+resul[0].nombre,
+                    html:'<h4>tu contrasena es   '+resul[0].contrasena+'</h4>'
+                }
+                transporter.sendMail(options,(erro,inf)=>{
+                    if(erro){
+                        console.log(erro);
+                    }else{
+                        console.log('cooreo enviado' +inf.response);
+                    }
+                });
+                return res.status(200).json({message:"contrasena enviada a tu correo"});
+            }
+        }else{
+            return res.status(500).json(err);
+        }
+    })
+
+  })
+
+
+
+
+
+
+
+
 
 
 module.exports = router
