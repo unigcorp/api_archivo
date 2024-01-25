@@ -20,7 +20,7 @@ router.get('/get',token.vericarToken,(req,res)=>{
 router.post('/login',(req,res)=>{
     const data = req.body;
     query = "SELECT * FROM usuario WHERE correo = ? AND contrasena = ?";
-    //console.log('=====',data)
+    console.log('=====',data)
     connect.query(query,[data.correo,data.contrasena],(err,result)=>{
         if(!err){
             if(result.length <=0 || result[0].contrasena != data.contrasena){
@@ -33,6 +33,13 @@ router.post('/login',(req,res)=>{
                     }
                     const acctoken = jwt.sign(response,process.env.ACCESS_TOKEN);
                     return res.status(200).json({token:acctoken,result});
+                    // const acctoken = {
+                    //     token:jwt.sign(response,process.env.ACCESS_TOKEN),
+                    //     correo:result[0].correo,
+                    //     contrasena:result[0].contrasena
+
+                    // }
+                    // return res.status(200).json(acctoken);
                 }
             }    
         }else{
