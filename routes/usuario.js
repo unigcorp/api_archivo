@@ -7,7 +7,7 @@ require('dotenv').config();
  
 const emailNode = require('nodemailer');
 
-router.get('/get',token.vericarToken,(req,res)=>{
+router.get('/get',(req,res)=>{
      query = "SELECT * FROM usuario";
      connect.query(query,(err,rest)=>{
         if(!err){
@@ -31,15 +31,14 @@ router.post('/login',(req,res)=>{
                         correo:result[0].correo,
                         contrasena:result[0].contrasena
                     }
-                    const acctoken = jwt.sign(response,process.env.ACCESS_TOKEN);
-                    return res.status(200).json({token:acctoken,result});
-                    // const acctoken = {
-                    //     token:jwt.sign(response,process.env.ACCESS_TOKEN),
-                    //     correo:result[0].correo,
-                    //     contrasena:result[0].contrasena
+                    /*const acctoken = jwt.sign(response,process.env.ACCESS_TOKEN);
+                    return res.status(200).json({token:acctoken,result});*/
+                     const acctoken = {
+                        token:jwt.sign(response,process.env.ACCESS_TOKEN),
+                        result:result
 
-                    // }
-                    // return res.status(200).json(acctoken);
+                     }
+                    return res.status(200).json(acctoken);
                 }
             }    
         }else{
@@ -49,6 +48,7 @@ router.post('/login',(req,res)=>{
 });
 router.post('/signup',(req,res)=>{
     const data = req.body;
+    console.log("=======> ",data)
     query = "SELECT * FROM usuario WHERE correo=?";
     connect.query(query,[data.correo],(error,result)=>{
         if(!error){
