@@ -46,7 +46,7 @@ router.post('/login',(req,res)=>{
         }
     })
 });
-router.post('/signup',(req,res)=>{
+router.post('/signup',(req, res)=>{
     const data = req.body;
     console.log("=======> ",data)
     query = "SELECT * FROM usuario WHERE correo=?";
