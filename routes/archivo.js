@@ -41,9 +41,10 @@ router.patch('/update',token.vericarToken,(req,res)=>{
         }
     })
 });
+//ruta , endpoint  para eliminar
 router.delete("/delete/:ids",token.vericarToken,(req,res)=>{
     let dato = req.params.ids;
-    query = "DELETE FROM archivo WHERE id_archivo=?";
+    query = "DELETE FROM solicitud WHERE id_sol=?";
     connect.query(query,[dato],(error,result)=>{
         if(!error){
             return res.status(200).json({message:"USUARIO ELIMINADO CON EXITO"})
@@ -52,5 +53,17 @@ router.delete("/delete/:ids",token.vericarToken,(req,res)=>{
         }
     })
 });
+router.post('/add',token.vericarToken,(req,res)=>{
+    const dato = req.body;
+    query = "INSERT INTO solicitud(id_usuario,id_archivo,status) VALUES(?,?,'EN PROCESO')";
+    connect.query(query,[dato.id_usuario,dato.id_archivo],(error,result)=>{
+        if(!error){
+            return res.status(200).json({message:"ARCHIVO SE SOLICITO CORRECTAMENTE"})
+        }
+        else{
+            return res.status(500).json(error);
+        }
+    })
+})
 
 module.exports = router
