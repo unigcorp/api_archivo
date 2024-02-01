@@ -12,6 +12,6 @@ app.use(cors());
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
 
-app.use('/nombre_carpeta_creada/user',usuarioRuta);
+app.use('/user',usuarioRuta);
 app.use('/file',archivoRuta);
 module.exports = app;

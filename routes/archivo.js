@@ -32,7 +32,9 @@ router.get('/get',token.vericarToken,(req,res)=>{
 });
 router.patch('/update',token.vericarToken,(req,res)=>{
     const data = req.body; 
-    query = "UPDATE solicitud SET id_usuario=?,id_archivo=?,status='EN PROCESO' WHERE id_sol=?";
+
+    query = "UPDATE solicitud SET =?,id_archivo=?,status='EN PROCESO' WHERE id_sol=?";
+    
     connect.query(query,[data.id_usuario,data.id_archivo,data.id_sol],(error,result)=>{
         if(!error){
             return res.status(200).json({message:"ARCHIVO ACTUALIZADO CORRECTAMENTE"})
